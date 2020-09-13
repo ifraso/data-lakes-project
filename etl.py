@@ -133,6 +133,7 @@ def process_log_data(spark, input_data, output_data):
     dfSongPlays = dfLogData.selectExpr(
         'datetime as start_time',
         'userId as user_id',
+        'level',
         'song',
         'artist',
         'sessionId as session_id',
@@ -149,9 +150,6 @@ def process_log_data(spark, input_data, output_data):
 
     # join with artist data
     dfSongPlays = dfSongPlays.join(dfSongDataArtist, dfSongPlays.artist == dfSongDataArtist.artist_name).drop('artist', 'artist_name')
-
-    # join with time table
-    dfSongPlays = dfSongPlays.join(dfTime, 'start_time')
 
     # add id
     dfSongPlays = dfSongPlays.withColumn("songplay_id", monotonically_increasing_id())
